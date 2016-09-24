@@ -16,6 +16,8 @@ This framework can be broken down into several category and skill level team wor
         <li>Event Listeners</li>
         <li>etc...</li>
     </ul>
+</li>
+<li>
     <ul>
         <li>Jr skill engineer handles the API Layer</li>
         <li>Page Objects</li>
@@ -24,6 +26,8 @@ This framework can be broken down into several category and skill level team wor
         <li>Test result analysis and debugging fixing</li>
         <li>etc...</li>
     </ul>
+</li>
+<li>
     <ul>
         <li>Entry skill engineer handles the API Layer</li>
         <li>Resource locators</li>
