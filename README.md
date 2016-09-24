@@ -25,7 +25,7 @@ This framework can be broken down into several category and skill level team wor
         <li>etc...</li>
     </ul>
 </li>
-<li>>Entry skill engineer handles the API Layer
+<li>Entry skill engineer handles the API Layer
     <ul>
         <li>Resource locators</li>
         <li>TestNG XML script flow</li>
