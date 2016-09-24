@@ -25,8 +25,7 @@ public class PracticeForm extends QAFactory implements Fieldset{
             getElement("calendar.today").click();
         }
 
-        sendKeys(getElement("verification.input"), verificationValErr);
-        getElement("verification.fieldset").click();
+        submitValidVerification(verificationValErr);
         return this;
     }
 
