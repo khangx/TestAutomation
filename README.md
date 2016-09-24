@@ -6,9 +6,8 @@ This framework can be broken down into several category and skill level team wor
 
 <p>
 <ul>
-<li>
+<li>High skill engineer handles internal cores and features of the framework
     <ul>
-        <li>High skill engineer handles internal cores and features of the framework</li>
         <li>Annotations</li>
         <li>Interface skeletal designs</li>
         <li>QADriver</li>
@@ -17,9 +16,8 @@ This framework can be broken down into several category and skill level team wor
         <li>etc...</li>
     </ul>
 </li>
-<li>
+<li>Jr skill engineer handles the API Layer
     <ul>
-        <li>Jr skill engineer handles the API Layer</li>
         <li>Page Objects</li>
         <li>Page Object verifiers</li>
         <li>Scripting tests methods</li>
@@ -27,9 +25,8 @@ This framework can be broken down into several category and skill level team wor
         <li>etc...</li>
     </ul>
 </li>
-<li>
+<li>>Entry skill engineer handles the API Layer
     <ul>
-        <li>Entry skill engineer handles the API Layer</li>
         <li>Resource locators</li>
         <li>TestNG XML script flow</li>
         <li>Test result analysing and manual followup debug</li>
