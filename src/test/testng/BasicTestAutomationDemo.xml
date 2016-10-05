@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Demo" verbose="1" >
+   <test name="imdb demo">
+       <classes>
+           <class name="com.qa.BasicTestAutomationDemo">
+               <methods>
+                   <include name="movies_InTheaters"/>
+               </methods>
+           </class>
+       </classes>
+   </test>
+</suite>

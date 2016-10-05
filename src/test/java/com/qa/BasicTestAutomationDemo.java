@@ -2,7 +2,7 @@ package com.qa;
 
 import com.qa.annotations.KnownBugs;
 import com.qa.annotations.TestReference;
-import com.qa.pages.PracticeForm;
+import com.qa.pages.ImdbHome;
 import org.testng.annotations.Test;
 
 /**
@@ -11,23 +11,13 @@ import org.testng.annotations.Test;
  */
 public class BasicTestAutomationDemo extends BaseFactory {
 
-    @Test(description = "Visit the test site, and test Fieldset and Verification forms functionality.")
-    @TestReference(reference = {"015","30"})
+    @Test(description = "Go to www.imdb.com and mouse over the Movies, TV & Shows. Verify that the sub menu becomes visible.")
+    @TestReference(reference = {"015","030"})
     @KnownBugs(bugs = {"QAA01","QAA02"})
-    public void testFieldSetAndVerification(){
-        String textareaContent = "Hello QAE";
-        String checkBox = "Option 2";
-        String radioButton = "Option 1";
-        String dropDownSelection = "Option 2";
-        String date = "Today";
-        String verificationErrInput = "123";
-        String verificationValidInput = "12";
-        String expectedVerificationErrMsg = "Please enter no more than 2 characters.";
-
-        getPage(PracticeForm.class)
-                .fillInFieldSet(textareaContent, checkBox, radioButton, dropDownSelection, BY.TEXT, date, verificationErrInput)
-                .verify().isSubmitErrorMsgVisible(expectedVerificationErrMsg)
-                .submitValidVerification(verificationValidInput)
-                .verify().isSubmitErrorMsgHidden();
+    public void movies_InTheaters(){
+        getPage(ImdbHome.class)
+                .verify().areTrailersPresent()
+                .goToMovies_InTheaters()
+                .verify().isInTheatersHeaderLoaded("In Theaters");
     }
 }

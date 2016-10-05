@@ -1,8 +1,10 @@
 package com.qa.webdriver;
 
+import com.qa.pages.staticmenu.ConsumerNavigation;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
@@ -10,6 +12,7 @@ import org.openqa.selenium.support.ui.Select;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
@@ -19,16 +22,29 @@ public abstract class QAFactory extends QADriver {
     private final Integer softCheckTimeOut = 5;
     public ResourceBundle rb;
     protected ResourceBundle config = ResourceBundle.getBundle("config");
+    private Actions actions;
 
     public enum BY{
         VALUE, TEXT
     }
 
     public QAFactory(){}
+
+    /**
+     * Constructor to initialize Selenium WebDriver and Actions
+     * @param driver
+     */
     public QAFactory(WebDriver driver){
         this.driver = driver;
+        actions = new Actions(driver);
     }
 
+    /**
+     * Select by visible text or by option value
+     * @param menuElement - Dropdown menu
+     * @param value - option value
+     * @param option - TEXT or VALUE
+     */
     public void selectBy(WebElement menuElement, String value, BY option){
         Select menu = new Select(menuElement);
         switch(option){
@@ -43,30 +59,67 @@ public abstract class QAFactory extends QADriver {
         }
     }
 
+    /**
+     * Check an input box if it is not already checked
+     * @param box - input checkbox
+     */
     public void checkBox(WebElement box){
         if(!box.isSelected()){
             box.click();
         }
     }
 
+    /**
+     * Clear and send text to web element
+     * @param webElement - Input or element to send text to
+     * @param value - Text to type
+     */
     public void sendKeys(WebElement webElement, String value){
         webElement.clear();
         webElement.sendKeys(value);
     }
 
+    /**
+     * Get a WebElement based on locator and parameters
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - WebElement
+     */
     public WebElement getElement(String locator, String... params){
        return findElement(locatorBuilder(locator, params));
     }
 
-    public List<WebElement> getElements(String element, String... params){
-        for(String param : params){
-            element = element.replaceFirst("%s", param);
-        }
-
-        return findElements(locatorBuilder(element));
+    /**
+     * Get a WebElement based on locator and parameters
+     * @param clazz - The next page to expect (Navigation)
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - WebElement
+     */
+    public WebElement getElement(Class clazz, String locator, String... params){
+        return findElement(locatorBuilder(locator, params));
     }
 
+    /**
+     * Get a list of WebElements
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - List<WebElement></WebElement>
+     */
+    public List<WebElement> getElements(String locator, String... params){
+        for(String param : params){
+            locator = locator.replaceFirst("%s", param);
+        }
 
+        return findElements(locatorBuilder(locator));
+    }
+
+    /**
+     * Check if an element is present in the HTML DOM
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - True if found, else false
+     */
     public Boolean isElementPresent(String locator, String... params){
         try {
             waiter(ExpectedConditions.presenceOfElementLocated(locatorBuilder(locator,params)), softCheckTimeOut);
@@ -75,7 +128,12 @@ public abstract class QAFactory extends QADriver {
             return false;
         }
     }
-
+    /**
+     * Check if an element is visible
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - True if visible, else false
+     */
     public Boolean isElementVisible(String locator, String... params){
         try{
             waiter(new ExpectedCondition<Boolean>() {
@@ -95,18 +153,43 @@ public abstract class QAFactory extends QADriver {
         }
     }
 
+    /**
+     * Get the display text of the WebElement
+     * @param locator - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - Text from WebElement
+     */
     public String getDisplayText(String locator, String... params){
         return getElement(locator, params).getText();
     }
 
+    /**
+     * Get the value of a specified attribute from a WebElement
+     * @param locator - Locator variable from resource properties files
+     * @param attribute - Specified attribute from WebElement
+     * @param params - Text to replace in the locator
+     * @return - String value of attribute
+     */
     public String getElementAttribute(String locator, String attribute, String... params){
         return getElement(locator, params).getAttribute(attribute);
     }
 
-    private By locatorBuilder(String path, String... params){
-        rb = ResourceBundle.getBundle(this.getClass().getName(), Locale.getDefault(),this.getClass().getClassLoader());
+    /**
+     * Get the Selenium By based on the properties file locator type
+     * @param locatorVar - Locator variable from resource properties files
+     * @param params - Text to replace in the locator
+     * @return - By.ID, By.className, By.XPATH etc.
+     */
+    private By locatorBuilder(String locatorVar, String... params){
+        rb = ResourceBundle.getBundle(this.getClass().getName(), Locale.getDefault(), this.getClass().getClassLoader());
         By by = null;
-        String[] locator = rb.getString(path).split(";");
+        String[] locator;
+        try{
+            locator = rb.getString(locatorVar).split(";");
+        }catch (MissingResourceException e){
+            rb = ResourceBundle.getBundle(ConsumerNavigation.class.getName(), Locale.getDefault(), ConsumerNavigation.class.getClassLoader());
+            locator = rb.getString(locatorVar).split(";");
+        }
 
         String locatorPath = locator[0];
         String locatorBy = locator[1];
@@ -145,6 +228,22 @@ public abstract class QAFactory extends QADriver {
         return by;
     }
 
+    /**
+     * Perform mouseover on a WebElement, and wait for an element to become visible
+     * @param mouseIn - WebElement to MouseOver
+     * @param waitFor - WebElement to wait on
+     */
+    public void mouseOverAndWaitFor(WebElement mouseIn, WebElement waitFor){
+        actions.moveToElement(mouseIn).build().perform();
+        waitr.until(ExpectedConditions.visibilityOf(waitFor));
+    }
+
+    /**
+     * Get the next navigation page object
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public <T>T getPage(Class<T> clazz){
 
         T page = null;
