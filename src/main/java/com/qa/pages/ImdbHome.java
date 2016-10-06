@@ -21,7 +21,11 @@ public class ImdbHome extends QAFactory{
      */
     public InTheaters goToMovies_InTheaters(){
         ConsumerNavigation.openMenu(this, getElement("menu.movies"), getElement("submenu.movies"));
-        getElement("inTheaters.link").click();
+        click(getElement("inTheaters.link"));
         return getPage(InTheaters.class);
+    }
+
+    public SearchResult searchFor(String searchStr){
+        return ConsumerNavigation.search(this, getElement("search.input"), searchStr, getElement("search.submit.btn"));
     }
 }

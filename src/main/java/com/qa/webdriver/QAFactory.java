@@ -1,12 +1,12 @@
 package com.qa.webdriver;
 
+import com.qa.listener.LogLevel;
 import com.qa.pages.staticmenu.ConsumerNavigation;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Select;
 
 import java.lang.reflect.InvocationTargetException;
@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+
+import static com.qa.listener.QALogger.log;
+import static com.qa.qautil.QAUtilities.getByFromWebElement;
 
 /**
  * Created by Robbie on 9/23/2016.
@@ -23,6 +27,7 @@ public abstract class QAFactory extends QADriver {
     public ResourceBundle rb;
     protected ResourceBundle config = ResourceBundle.getBundle("config");
     private Actions actions;
+    private JavascriptExecutor js;
 
     public enum BY{
         VALUE, TEXT
@@ -37,6 +42,11 @@ public abstract class QAFactory extends QADriver {
     public QAFactory(WebDriver driver){
         this.driver = driver;
         actions = new Actions(driver);
+        js = (JavascriptExecutor)driver;
+        waitr = new FluentWait(driver)
+                .ignoring(NoSuchElementException.class)
+                .pollingEvery(800, TimeUnit.MILLISECONDS)
+                .withTimeout(20, TimeUnit.SECONDS);
     }
 
     /**
@@ -46,6 +56,7 @@ public abstract class QAFactory extends QADriver {
      * @param option - TEXT or VALUE
      */
     public void selectBy(WebElement menuElement, String value, BY option){
+        log(this.getClass(), String.format("Select by %s value %s from %s", option, value, getByFromWebElement(menuElement)));
         Select menu = new Select(menuElement);
         switch(option){
             default:
@@ -64,6 +75,7 @@ public abstract class QAFactory extends QADriver {
      * @param box - input checkbox
      */
     public void checkBox(WebElement box){
+        log(this, String.format("Check box %s", getByFromWebElement(box)));
         if(!box.isSelected()){
             box.click();
         }
@@ -75,6 +87,7 @@ public abstract class QAFactory extends QADriver {
      * @param value - Text to type
      */
     public void sendKeys(WebElement webElement, String value){
+        log(this, String.format("Send text %s to %s", value, getByFromWebElement(webElement)));
         webElement.clear();
         webElement.sendKeys(value);
     }
@@ -107,11 +120,7 @@ public abstract class QAFactory extends QADriver {
      * @return - List<WebElement></WebElement>
      */
     public List<WebElement> getElements(String locator, String... params){
-        for(String param : params){
-            locator = locator.replaceFirst("%s", param);
-        }
-
-        return findElements(locatorBuilder(locator));
+        return findElements(locatorBuilder(locator, params));
     }
 
     /**
@@ -122,7 +131,7 @@ public abstract class QAFactory extends QADriver {
      */
     public Boolean isElementPresent(String locator, String... params){
         try {
-            waiter(ExpectedConditions.presenceOfElementLocated(locatorBuilder(locator,params)), softCheckTimeOut);
+            waiter(ExpectedConditions.presenceOfElementLocated(locatorBuilder(locator, params)), softCheckTimeOut);
             return true;
         }catch (Exception e){
             return false;
@@ -160,7 +169,9 @@ public abstract class QAFactory extends QADriver {
      * @return - Text from WebElement
      */
     public String getDisplayText(String locator, String... params){
-        return getElement(locator, params).getText();
+        WebElement webElement = getElement(locator, params);
+        log(this, "Get display text from "+getByFromWebElement(webElement));
+        return webElement.getText();
     }
 
     /**
@@ -171,7 +182,9 @@ public abstract class QAFactory extends QADriver {
      * @return - String value of attribute
      */
     public String getElementAttribute(String locator, String attribute, String... params){
-        return getElement(locator, params).getAttribute(attribute);
+        WebElement webElement = getElement(locator, params);
+        log(this, String.format("Get attribute %s from %s", attribute, getByFromWebElement(webElement)));
+        return webElement.getAttribute(attribute);
     }
 
     /**
@@ -229,13 +242,34 @@ public abstract class QAFactory extends QADriver {
     }
 
     /**
+     * Basic selenium click with added functionality to wait until element is clickable
+     * @param webElement
+     */
+    public void click(WebElement webElement){
+        waitr.until(ExpectedConditions.elementToBeClickable(webElement));
+        webElement.click();
+    }
+
+    /**
      * Perform mouseover on a WebElement, and wait for an element to become visible
      * @param mouseIn - WebElement to MouseOver
      * @param waitFor - WebElement to wait on
      */
     public void mouseOverAndWaitFor(WebElement mouseIn, WebElement waitFor){
+        log(this, String.format("MouseOver %s and wait for %s", getByFromWebElement(mouseIn), getByFromWebElement(waitFor)), LogLevel.FATAL);
+        jsExecute("alert('Automation');");
+        driver.switchTo().alert().accept();
         actions.moveToElement(mouseIn).build().perform();
         waitr.until(ExpectedConditions.visibilityOf(waitFor));
+    }
+
+    /**
+     * Execute javascript
+     * @param str - JavaScript code
+     */
+    public void jsExecute(String str){
+        log(this, "Executing javascript: "+str);
+        js.executeScript(str);
     }
 
     /**
@@ -245,7 +279,7 @@ public abstract class QAFactory extends QADriver {
      * @return
      */
     public <T>T getPage(Class<T> clazz){
-
+        log(clazz, "Navigate to page: "+clazz.getSimpleName(), LogLevel.DEBUG);
         T page = null;
         try {
             page = clazz.getConstructor(WebDriver.class).newInstance(driver);

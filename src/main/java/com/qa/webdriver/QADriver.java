@@ -1,9 +1,6 @@
 package com.qa.webdriver;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -23,9 +20,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class QADriver implements WebDriver {
     protected WebDriver driver;
-    protected static Wait<WebDriver> waitr;
+    protected Wait<WebDriver> waitr;
 
-    public void init(String baseUrl, Integer port){
+    synchronized public void init(String baseUrl, Integer port){
         try {
             if(port != null) {
                 driver = new RemoteWebDriver(new URL(baseUrl+":"+port+"/wd/hub"), getDesiredCapabilities());
@@ -36,13 +33,10 @@ public class QADriver implements WebDriver {
             driver = new FirefoxDriver(getDesiredCapabilities());
         }
 
-        waitr = new FluentWait(driver)
-                .ignoring(NoSuchElementException.class)
-                .pollingEvery(800, TimeUnit.MILLISECONDS)
-                .withTimeout(20, TimeUnit.SECONDS);
+
     }
 
-    protected void waiter(ExpectedCondition expectedCondition, Integer timeout){
+    protected void waiter(ExpectedCondition expectedCondition, final Integer timeout){
         new FluentWait(driver)
                 .ignoring(NoSuchElementException.class)
                 .pollingEvery(800, TimeUnit.MILLISECONDS)
@@ -79,7 +73,6 @@ public class QADriver implements WebDriver {
         return waitr.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
-    
     public String getPageSource() {
         return driver.getPageSource();
     }

@@ -1,7 +1,12 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 
-<suite name="Demo" verbose="1" >
-   <test name="imdb demo">
+<suite name="Demo" verbose="1" parallel="tests" thread-count="2" >
+    <listeners>
+        <listener class-name="com.qa.listener.QAListener"/>
+    </listeners>
+
+   <test name="GoTo Theaters">
+       <parameter name="theaterLink" value="In Theaters"/>
        <classes>
            <class name="com.qa.BasicTestAutomationDemo">
                <methods>
@@ -10,4 +15,17 @@
            </class>
        </classes>
    </test>
+
+    <!--<test name="Search for Batman vs. Robin">
+        <parameter name="searchTitle" value="Batman vs. Robin"/>
+        <parameter name="videoResult" value="Batman vs. Robin (2015) (Video)"/>
+        <parameter name="movieTitle" value="Batman vs. Robin (2015)"/>
+        <classes>
+            <class name="com.qa.BasicTestAutomationDemo">
+                <methods>
+                    <include name="searchMovie"/>
+                </methods>
+            </class>
+        </classes>
+    </test>-->
 </suite>
