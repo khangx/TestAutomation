@@ -77,10 +77,13 @@ div.test                 {margin-top: 0.1em; clear: right; font-size: 1.3em;}
 .overviewTable tr        {height: 1.6em;}
 
 /* Custom CSS reporting style */
-.fatal, .info, .warn, .debug {font-size:9pt}
-.fatal                  {color:red}
-.info                   {color:gray}
-.warn                   {color:gold}
-.debug                  {color:blue}
+.fatal                  {color: red}
+.info                   {color: gray}
+.warn                   {color: gold}
+.debug                  {color: blue}
+.step:before            {content: "• "}
+.step                   {color: #000}
+.ss a                   {color: red; font-weight: bold;}
+.ss a:visited           {color: #922}
 
 

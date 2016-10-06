@@ -2,8 +2,10 @@ package com.qa.pages;
 
 import com.qa.webdriver.QAFactory;
 
+import static com.qa.listener.QALogger.logStep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 
 /**
@@ -22,7 +24,8 @@ public class ImdbHomeVerify<T extends ImdbHome> extends QAFactory {
      * @return
      */
     public ImdbHome areTrailersPresent(){
-        assertThat("Trailers are present", page.isElementPresent("trailers"), is(true));
+        logStep(page, "Verify that the trailers are present and visible");
+        assertThat("Trailers are present", page.isElementPresent("trailers"), is(equalTo(true)));
         return page;
     }
 }

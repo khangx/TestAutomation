@@ -5,7 +5,7 @@
         <listener class-name="com.qa.listener.QAListener"/>
     </listeners>
 
-   <test name="GoTo Theaters">
+    <test name="GoTo Theaters">
        <parameter name="theaterLink" value="In Theaters"/>
        <classes>
            <class name="com.qa.BasicTestAutomationDemo">
@@ -14,9 +14,9 @@
                </methods>
            </class>
        </classes>
-   </test>
+    </test>
 
-    <!--<test name="Search for Batman vs. Robin">
+    <test name="Search for Batman vs. Robin">
         <parameter name="searchTitle" value="Batman vs. Robin"/>
         <parameter name="videoResult" value="Batman vs. Robin (2015) (Video)"/>
         <parameter name="movieTitle" value="Batman vs. Robin (2015)"/>
@@ -27,5 +27,5 @@
                 </methods>
             </class>
         </classes>
-    </test>-->
+    </test>
 </suite>

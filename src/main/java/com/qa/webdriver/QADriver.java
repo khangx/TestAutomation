@@ -110,4 +110,8 @@ public class QADriver implements WebDriver {
     public Options manage() {
         return driver.manage();
     }
+
+    public WebDriver getDriver(){
+        return driver;
+    }
 }

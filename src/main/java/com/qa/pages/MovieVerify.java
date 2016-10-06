@@ -2,6 +2,7 @@ package com.qa.pages;
 
 import com.qa.webdriver.QAFactory;
 
+import static com.qa.listener.QALogger.logStep;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -23,6 +24,7 @@ public class MovieVerify<T extends Movie> extends QAFactory {
      * @return Movie page
      */
     public Movie isMoviePageLoaded(String movieTitle){
+        logStep(page, String.format("Verify that the Movies page is loaded and movie Title %s is present", movieTitle));
         assertThat("Movie title is "+movieTitle, page.getDisplayText("movie.title"), is(movieTitle));
         return page;
     }

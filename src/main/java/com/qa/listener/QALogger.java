@@ -8,8 +8,14 @@ import org.testng.Reporter;
  * Created by Robbie on 10/6/2016.
  */
 public class QALogger {
+    public static final Boolean DEBUG = Boolean.valueOf(System.getProperty("debug"));
+
     public static void log(Object clazz, String msg, LogLevel logLevel){
         log(clazz, msg, logLevel, null);
+    }
+
+    public static void logStep(Object clazz, String msg){
+        log(clazz, msg, LogLevel.STEP, null);
     }
 
     public static void log(Object clazz, String msg){
@@ -17,46 +23,51 @@ public class QALogger {
     }
 
     /**
-     *
-     * @param clazz
-     * @param msg
-     * @param logLevel
-     * @param e
+     *  Log output both to console and HTML report
+     * @param clazz - Page Object
+     * @param msg - Message to be logged
+     * @param logLevel - Type of log message
+     * @param e - Exception stacktrace
      */
     public static void log(Object clazz, String msg, LogLevel logLevel, Exception e){
         Logger logger;
-
+        Class page;
         if(clazz instanceof Class) {
-            logger = LogManager.getLogger((Class)clazz);
+            page = (Class)clazz;
+            logger = LogManager.getLogger(page);
         }else{
-            logger = LogManager.getLogger(clazz);
+            page = clazz.getClass();
+            logger = LogManager.getLogger(page);
         }
 
-        switch(logLevel){
-            default:
-            case INFO:
-                logger.info(msg);
-                Reporter.log(String.format("<div class='info'>%s</div>",msg));
-                break;
-            case DEBUG:
-                logger.debug(msg);
-                Reporter.log(String.format("<div class='debug'>%s</div>",msg));
-                break;
-            case WARN:
-                logger.warn(msg);
-                Reporter.log(String.format("<div class='warn'>%s</div>",msg));
-                break;
-            case FATAL:
-            case ERROR:
-                if(e!=null) {
-                    logger.fatal(msg, e);
-                    Reporter.log(String.format("<div class='fatal'>%s</div><div class='stacktrace'>%s</div>", msg, e));
-                } else {
-                    logger.fatal(msg);
-                    Reporter.log(String.format("<div class='fatal'>%s</div>",msg));
-                }
-                break;
+        if(DEBUG || logLevel.equals(LogLevel.DEBUG)){
+            logger.debug(msg);
+            Reporter.log(String.format("<div>[%s] %s</div>", page.getSimpleName(), msg));
+        }else{
+            switch (logLevel) {
+                case DEBUG:
+                    logger.debug(msg);
+                    Reporter.log(String.format("<div class='debug'>[%s] %s</div>", page.getSimpleName(), msg));
+                    break;
+                case STEP:
+                    logger.debug(msg);
+                    Reporter.log(String.format("<div class='step'>[%s] %s</div>", page.getSimpleName(), msg));
+                    break;
+                case WARN:
+                    logger.warn(msg);
+                    Reporter.log(String.format("<div class='warn'>[%s] %s</div>", page.getSimpleName(), msg));
+                    break;
+                case FATAL:
+                case ERROR:
+                    if (e != null) {
+                        logger.fatal(msg, e);
+                        Reporter.log(String.format("<div class='fatal'>[%s] %s</div><div class='stacktrace'>%s</div>", page.getSimpleName(), msg, e));
+                    } else {
+                        logger.fatal(msg);
+                        Reporter.log(String.format("<div class='fatal'>[%s] %s</div>", page.getSimpleName(), msg));
+                    }
+                    break;
+            }
         }
-
     }
 }

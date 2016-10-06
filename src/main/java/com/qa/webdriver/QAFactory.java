@@ -1,6 +1,5 @@
 package com.qa.webdriver;
 
-import com.qa.listener.LogLevel;
 import com.qa.pages.staticmenu.ConsumerNavigation;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -170,7 +169,7 @@ public abstract class QAFactory extends QADriver {
      */
     public String getDisplayText(String locator, String... params){
         WebElement webElement = getElement(locator, params);
-        log(this, "Get display text from "+getByFromWebElement(webElement));
+        log(this, "Get display text from " + getByFromWebElement(webElement));
         return webElement.getText();
     }
 
@@ -256,7 +255,7 @@ public abstract class QAFactory extends QADriver {
      * @param waitFor - WebElement to wait on
      */
     public void mouseOverAndWaitFor(WebElement mouseIn, WebElement waitFor){
-        log(this, String.format("MouseOver %s and wait for %s", getByFromWebElement(mouseIn), getByFromWebElement(waitFor)), LogLevel.FATAL);
+        log(this, String.format("MouseOver %s and wait for %s", getByFromWebElement(mouseIn), getByFromWebElement(waitFor)));
         jsExecute("alert('Automation');");
         driver.switchTo().alert().accept();
         actions.moveToElement(mouseIn).build().perform();
@@ -268,7 +267,7 @@ public abstract class QAFactory extends QADriver {
      * @param str - JavaScript code
      */
     public void jsExecute(String str){
-        log(this, "Executing javascript: "+str);
+        log(this, "Executing javascript: " + str);
         js.executeScript(str);
     }
 
@@ -279,17 +278,11 @@ public abstract class QAFactory extends QADriver {
      * @return
      */
     public <T>T getPage(Class<T> clazz){
-        log(clazz, "Navigate to page: "+clazz.getSimpleName(), LogLevel.DEBUG);
+        log(clazz, "Navigate to page: " + clazz.getSimpleName());
         T page = null;
         try {
             page = clazz.getConstructor(WebDriver.class).newInstance(driver);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return page;
