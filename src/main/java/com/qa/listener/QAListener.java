@@ -63,7 +63,7 @@ public class QAListener extends HTMLReporter implements ITestListener  {
         String testName = iTestResult.getMethod().getMethodName();
         Long date = Calendar.getInstance().getTime().getTime();
         String ssName = String.format("%s_%s.png", testName, date);
-        File ssLocation = new File(System.getProperty("user.dir")+"/target/maven-surefire-reports/html/ss/"+ssName);
+        File ssLocation = new File(System.getProperty("user.dir")+"/target/html/ss/"+ssName);
         try {
             FileUtils.copyFile(ss, ssLocation);
             Reporter.log(String.format("<div class='ss'><a href=\"ss/%s\">%s</a></div>", ssLocation.getName(), ssLocation.getName()));
