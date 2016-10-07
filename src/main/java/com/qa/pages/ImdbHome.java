@@ -28,6 +28,11 @@ public class ImdbHome extends QAFactory{
         return getPage(InTheaters.class);
     }
 
+    /**
+     * Search for something in the consumers static menu
+     * @param searchStr - Search term
+     * @return - SearchResult page
+     */
     public SearchResult searchFor(String searchStr){
         logStep(this, String.format("Search for movie with title %s", searchStr));
         return ConsumerNavigation.search(this, getElement("search.input"), searchStr, getElement("search.submit.btn"));

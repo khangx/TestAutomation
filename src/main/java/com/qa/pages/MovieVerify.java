@@ -24,7 +24,7 @@ public class MovieVerify<T extends Movie> extends QAFactory {
      * @return Movie page
      */
     public Movie isMoviePageLoaded(String movieTitle){
-        logStep(page, String.format("Verify that the Movies page is loaded and movie Title %s is present", movieTitle));
+        logStep(page, String.format("Verify that the Movies page is loaded and movie Title \"%s\" is present", movieTitle));
         assertThat("Movie title is "+movieTitle, page.getDisplayText("movie.title"), is(movieTitle));
         return page;
     }

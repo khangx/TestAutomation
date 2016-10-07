@@ -24,7 +24,7 @@ public class SearchResultVerify<T extends SearchResult> extends QAFactory {
      * @return
      */
     public SearchResult isResultsPresent(String searchStr){
-        logStep(page, String.format("Verify that the Search result for %s returned more than 0", searchStr));
+        logStep(page, String.format("Verify that the Search result for \"%s\" returned more than 0", searchStr));
         assertThat("Search results contains one or more matching", page.getElements("result.links", searchStr).size(), greaterThan(0));
         return page;
     }

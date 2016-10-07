@@ -45,12 +45,8 @@ public class QALogger {
             Reporter.log(String.format("<div>[%s] %s</div>", page.getSimpleName(), msg));
         }else{
             switch (logLevel) {
-                case DEBUG:
-                    logger.debug(msg);
-                    Reporter.log(String.format("<div class='debug'>[%s] %s</div>", page.getSimpleName(), msg));
-                    break;
                 case STEP:
-                    logger.debug(msg);
+                    logger.info(msg);
                     Reporter.log(String.format("<div class='step'>[%s] %s</div>", page.getSimpleName(), msg));
                     break;
                 case WARN:
